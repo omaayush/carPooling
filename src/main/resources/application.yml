@@ -1,0 +1,98 @@
+server:
+  # Enable response compression
+  compression:
+    enabled: true
+    min-response-size: 4096
+    mime-types: mime-types=text/html, text/xml, text/plain, text/css, text/javascript, application/javascript, application/json
+  port: ${PORT:8080}
+  maxHttpHeaderSize: 65536
+  tomcat:
+    accesslog:
+      pattern: "%{yyyy-MM-dd HH:mm:ss.SSSZ}t %a %A '%{User-Agent}i' [%{vComply-Request-Context}o] %r %s %b %D"
+      enabled: true
+    basedir: logs
+    connection-timeout: 120s
+    uri-encoding: UTF-8
+
+
+
+spring:
+  datasource:
+    initialSize: ${JDBC_INITIAL_SIZE:5}
+    minIdle: ${JDBC_MIN_IDLE:1}
+    maxIdle: ${JDBC_MAX_IDLE:5}
+    maxActive: ${JDBC_MAX_ACTIVE:20}
+    url: jdbc:postgresql://localhost:5432
+    username: postgres
+    password: postgres
+  jpa:
+    show-sql: false
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+        generate_statistics: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+        ddl-auto: update
+        order_inserts: true
+        order_updates: true
+        batch_versioned_data: true
+        hibernate:
+          id:
+            optimizer:
+              pooled:
+                preferred: pooled-lo
+        jdbc:
+          batch_size: 100
+          lob:
+            non_contextual_creation: true
+    hibernate:
+      ddl-auto: update
+  jackson:
+    default-property-inclusion: non_null
+    joda-date-time-format: "yyyy-MM-dd'T'HH:mm:ss.SSSZZ"
+    serialization:
+      write_dates_as_timestamps: false
+  flyway:
+    schemas: flipkart
+    default-schema: flipkart
+    enabled: true
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+endpoints:
+  info:
+    id: info
+    enabled: true
+    sensitive: true
+  health:
+    id: health
+    enabled: true
+    sensitive: true
+  logfile:
+    id: logfile
+    enabled: true
+    sensitive: true
+  metrics:
+    id: metrics
+    enabled: true
+    sensitive: true
+    filter:
+      enabled: true
+
+
+logging:
+  file:
+    name: vcomply.log
+    path: logs
+  level:
+    ROOT: info
+    com.vmware.eng.vsecr.vcomply: info
+    org.hibernate: warn
+    org.hibernate.type: warn
+    org.hibernate.stat: warn
+    org.springframework.security: warn
+    org.springframework.web: warn
+    org.hibernate.type.descriptor.sql.BasicBinder: warn
+    org.flywaydb: debug
